@@ -7,4 +7,4 @@ A little about me:
 
 Please enjoy this photo of a random, but very cute, penguin.
 
-![random penguin](C:\Users\rhard\OneDrive\Pictures\penguin.png)
+![random penguin](http://clipart-library.com/images/kcMb7kjni.png)
