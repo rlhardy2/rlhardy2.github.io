@@ -4,4 +4,4 @@ This blog will be used for one of my **current** classes: *ST 558*! 😄
 
 Please enjoy this picture of my kitty!
 
-![kitty](/pictures/kitty.jpg)
+![kitty](/Pictures/kitty.jpg)
