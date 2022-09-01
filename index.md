@@ -2,4 +2,4 @@ Hi! My name is Rachel Hardy. I am 25 years old and a **first-year** graduate stu
 
 This blog will be used for one of my **current** classes: *ST 558*! 😄
 
-![random penguin](./This PC/Pictures/penguin.png)
+![random penguin](./Pictures/penguin.png)
