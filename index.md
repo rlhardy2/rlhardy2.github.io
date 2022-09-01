@@ -5,6 +5,4 @@ A little about me:
 2. My favorite thing to do is go to the movies!
 3. I have a fraternal twin named Olivia.
 
-Please enjoy this photo of a random, but very cute, penguin.
-
-![random penguin](C:\Users\rhard\OneDrive\Pictures\kitty.jpg)
+![image](https://creazilla-store.fra1.digitaloceanspaces.com/cliparts/79332/coding-clipart-md.png)
