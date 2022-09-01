@@ -7,4 +7,4 @@ A little about me:
 
 Please enjoy this photo of a random, but very cute, penguin.
 
-![random penguin](http://clipart-library.com/images/kcMb7kjni.png)
+![random penguin](https://stock.adobe.com/search?k=penguin+clipart)
