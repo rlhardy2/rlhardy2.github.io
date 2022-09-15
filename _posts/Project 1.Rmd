@@ -1,0 +1,278 @@
+---
+title: "Project 1"
+author: "Rachel Hardy"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    theme: readable
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, cache = TRUE, show_col_types = FALSE)
+```
+
+# Data Processing
+
+## First Steps
+
+Step 0: Reading in the data.
+```{r}
+library(readr)
+sheet1 <- read_csv("https://www4.stat.ncsu.edu/~online/datasets/EDU01a.csv")
+```
+Step 1: Selecting certain columns.
+```{r}
+library(tidyverse)
+newSheet1 <- sheet1 %>% select(Area_name, STCOU, ends_with("D")) %>% rename(area_name = Area_name)
+newSheet1
+```
+Step 2: Converting data into long format.
+```{r}
+newSheet2 <- newSheet1 %>% pivot_longer(cols = ends_with("D"), names_to = "survey", values_to = "enrollment")
+newSheet2
+```
+Step 3: Parse the string to pull out the year and convert the year into a numeric value. In addition, grab the first three characters and following four digits to create a new variable representing which measurement was grabbed. I will also be creating a variable for the type of value we have from the survey.
+```{r}
+newSheet2$year <- substr(newSheet2$survey, 8, 9) %>% as.Date(format = "%y") %>% format("%Y") %>% as.numeric()
+newSheet2 <- newSheet2 %>% mutate(type = substr(survey, 4, 7), measurement = substr(survey, 1, 3))
+newSheet3 <- newSheet2 %>% select("area_name", "STCOU", "measurement", "type", "year", "enrollment")
+newSheet3
+```
+Step 4: Create two data sets. One that is only non-county level data and one that is only county level data.
+```{r}
+county <- newSheet3[c(grep(pattern = ", \\w\\w", newSheet3$area_name)), ]
+class(county) <- c("county", class(county))
+county
+
+state <- newSheet3[-c(grep(pattern = ", \\w\\w", newSheet3$area_name)), ]
+class(state) <- c("state", class(state))
+state
+```
+Step 5: For the county level tibble, create a new variable that describes which state one of these county measurements corresponds to.
+Note: I used information I found online to create the substrRight function in order to select the last two characters of a string.
+```{r}
+substrRight <- function(x, n){
+  substr(x, nchar(x)-n+1, nchar(x)) }
+
+county <- county %>% mutate(state = substrRight(county$area_name, 2))
+county
+```
+Step 6:  For the non-county level tibble, create a new variable called “division” corresponding to the state’s classification of division here. If row corresponds to a non-state (i.e. UNITED STATES), return ERROR for the division.
+```{r}
+state <- state %>% mutate(division = if_else(area_name %in% c("WASHINGTON", "IDAHO", "MONTANA", "OREGON", "WYOMING", "COLORADO", "UTAH", "NEVADA", "CALIFORNIA", "ALASKA", "HAWAII"), "West", 
+  if_else(area_name %in% c("NORTH DAKOTA", "SOUTH DAKOTA", "NEBRASKA", "KANSAS", "MINNESOTA", "IOWA", "MISSOURI", "WISCONSIN", "ILLINOIS", "MICHIGAN", "INDIANA", "OHIO"), "Midwest", 
+  if_else(area_name %in% c("ARIZONA", "NEW MEXICO", "TEXAS", "OKLAHOMA"), "Southwest",
+  if_else(area_name %in% c("MARYLAND", "DELAWARE", "PENNSYLVANIA", "NEW JERSEY", "CONNECTICUT", "RHODE ISLAND", "NEW YORK", "MASSACHUSETTS", "NEW HAMPSHIRE", "VERMONT", "MAINE"), "Northeast",
+  if_else(area_name %in% c("ARKANSAS", "LOUISIANA", "MISSISSIPPI", "ALABAMA", "FLORIDA", "GEORGIA", "SOUTH CAROLINA", "NORTH CAROLINA", "KENTUCKY", "TENNESSEE", "WEST VIRGINIA", "VIRGINIA", "DISTRICT OF COLUMBIA", "District of Columbia"), "Southeast",
+          "ERROR"))))))
+state
+```
+
+## Requirements
+
+Step 1: Creating a function that does steps 0, 1, and 2 from the previous section. Make sure to add the optional argument!
+```{r}
+creatingLong <- function(url, var_name = "enrollment") {
+  data1 <<- read_csv(url)
+  data1 <<- data1 %>% select(Area_name, STCOU, ends_with("D")) %>% rename(area_name = Area_name)
+  data1 <<- data1 %>% pivot_longer(cols = ends_with("D"), names_to = "survey", values_to = var_name)
+  return(data1)
+}
+
+creatingLong("https://www4.stat.ncsu.edu/~online/datasets/EDU01b.csv")
+```
+Step 2: Creating a function that takes in the output of step 2 and does step 3 from the previous section.
+```{r}
+parsingData <- function(url) {
+  creatingLong(url)
+  data1 <<- data1$year <- substr(data1$survey, 8, 9) %>% as.Date(format = "%y") %>% format("%Y") %>% as.numeric()
+  data1 <<- data1$type <- substr(data1$survey, 4, 7)
+  data1 <<- data1$measurement <- substr(data1$survey, 1, 3)
+  data2 <<- data1 %>% select("area_name", "STCOU", "measurement", "type", "year", "enrollment")
+  return(data2)
+}
+
+parsingData("https://www4.stat.ncsu.edu/~online/datasets/EDU01b.csv")
+```
+Step 3: Creating a function to do step 5 from the previous section.
+Note: This is the same function that I used in step 5 of the previous section!
+```{r}
+substrRight <- function(x, n){
+  substr(x, nchar(x)-n+1, nchar(x)) }
+```
+Step 4: Creating a function to do step 6 from the previous section.
+```{r}
+creatingDivisions <- function(var1) {
+  division = if_else(var1 %in% c("WASHINGTON", "IDAHO", "MONTANA", "OREGON", "WYOMING", "COLORADO", "UTAH", "NEVADA", "CALIFORNIA", "ALASKA", "HAWAII"), "West", 
+  if_else(var1 %in% c("NORTH DAKOTA", "SOUTH DAKOTA", "NEBRASKA", "KANSAS", "MINNESOTA", "IOWA", "MISSOURI", "WISCONSIN", "ILLINOIS", "MICHIGAN", "INDIANA", "OHIO"), "Midwest", 
+  if_else(var1 %in% c("ARIZONA", "NEW MEXICO", "TEXAS", "OKLAHOMA"), "Southwest",
+  if_else(var1 %in% c("MARYLAND", "DELAWARE", "PENNSYLVANIA", "NEW JERSEY", "CONNECTICUT", "RHODE ISLAND", "NEW YORK", "MASSACHUSETTS", "NEW HAMPSHIRE", "VERMONT", "MAINE"), "Northeast",
+  if_else(var1 %in% c("ARKANSAS", "LOUISIANA", "MISSISSIPPI", "ALABAMA", "FLORIDA", "GEORGIA", "SOUTH CAROLINA", "NORTH CAROLINA", "KENTUCKY", "TENNESSEE", "WEST VIRGINIA", "VIRGINIA", "DISTRICT OF COLUMBIA", "District of Columbia"), "Southeast",
+          "ERROR")))))
+}
+```
+Step 5: Creating a function that takes in the output from step 3 and creates the two tibbles in step 4, calls the above two functions (to perform steps 5 and 6), and returns two final tibbles.
+```{r}
+creatingCountyState <- function(url) {
+  parsingData(url)
+  
+  county1 <<- data2[c(grep(pattern = ", \\w\\w", data2$area_name)), ]
+  county1 <<- county1 %>% mutate(state = substrRight(county$area_name, 2))
+  class(county1) <- c("county", class(county1))
+  
+  state1 <<- data2[-c(grep(pattern = ", \\w\\w", data2$area_name)), ]
+  state1 <<- state1 %>% mutate(division = creatingDivisions(state1$area_name))
+  class(state1) <- c("state", class(state1))
+  
+  return(list(county1, state1))
+}
+
+creatingCountyState("https://www4.stat.ncsu.edu/~online/datasets/EDU01b.csv")
+```
+Step 6: Create the wrapper function!
+```{r}
+my_wrapper <- function(url, var_name = "enrollment") {
+  creatingLong(url, var_name = var_name)
+  parsingData(url)
+  creatingCountyState(url)
+  return(list(county1, state1))
+}
+
+my_wrapper("https://www4.stat.ncsu.edu/~online/datasets/EDU01b.csv")
+```
+
+# Call It and Combine Your Data
+
+Call the function you made two times to read in and parse the two .csv files mentioned so far. Be sure to
+call the new value column the same in both function calls.
+```{r}
+EDU01 <- my_wrapper("https://www4.stat.ncsu.edu/~online/datasets/EDU01a.csv")
+EDU02 <- my_wrapper("https://www4.stat.ncsu.edu/~online/datasets/EDU01b.csv")
+```
+Write a small function that takes in the results of two calls to your wrapper function and combines the tibbles
+appropriately. There will be two final tibbles: one for all county level data and one for all state level data!
+```{r}
+combineTibbles <- function(list1, list2) {
+  county01 <- as_tibble(list1[[1]])
+  state01 <- as_tibble(list1[[2]])
+  county02 <- as_tibble(list2[[1]])
+  state02 <- as_tibble(list2[[2]])
+  countyFinal <- dplyr::bind_rows(county01, county02)
+  stateFinal <- dplyr::bind_rows(state01, state02)
+  return(list(countyFinal, stateFinal))
+}
+
+EDU <- combineTibbles(EDU01, EDU02)
+```
+
+# Writing a Generic Function for Summarizing
+
+Run the following code in the console!
+```{r, eval = FALSE}
+plot.function  #what is used for a class = function
+getS3method("plot","data.frame")  #what is used for a class = data frame
+```
+For the state plotting function, I'll write a function that plots the mean value of the statistic (enrollment for this data set) across the years for each division. Observations with a division of "ERROR" will need to be removed.
+```{r}
+library(tidyverse)
+
+stateFinalEDU <- as_tibble(EDU[[2]])
+
+plot.state <- function(df, var_name = "enrollment") {
+  df <- df %>% group_by(division, year) %>% summarize(mean = mean(get(var_name)))
+  new_df <- df[!(df$division == "ERROR"),]
+  
+  ggplot(new_df, aes(x = year, y = mean, color = division)) + geom_line()
+}
+```
+```{r, eval = FALSE, echo = FALSE}
+plot.state(stateFinalEDU)
+```
+For the county plotting function, the function will allow the user to: specify the state of interest, giving a default value if not specified - determine whether the ‘top’ or ‘bottom’ most counties should be looked at with a default for ‘top’ - instruct how many of the ‘top’ or ‘bottom’ will be investigated with a default value of 5.
+```{r}
+
+countyFinalEDU <- as_tibble(EDU[[1]])
+
+plot.county <- function(df, state_abbrev = "AL", var_name = "enrollment", top = TRUE, bottom = FALSE, x = 5) {
+  df1 <<- df %>% filter(state == state_abbrev)
+  df2 <<- df1 %>% group_by(area_name) %>% mutate(average = mean(get(var_name)))
+  df3 <<- if (top) {
+            df2[order(df2$average, decreasing = TRUE),]
+            df2[1:x, ]
+          }
+          if (bottom) {
+            df2[order(df2$average, decreasing = FALSE),]
+            df2[1:x, ]
+          }
+  
+  ggplot(df3, aes(x = year, y = get(var_name), color = area_name)) + geom_line()
+}
+#For the life of me I couldn't figure this out completely! :(
+```
+```{r, eval = FALSE, echo = FALSE}
+plot.county(countyFinalEDU, state_abbrev = "NC", top = TRUE, x = 40)
+```
+
+# Put It Together!
+
+## EDU Data Sets
+
+Putting everything together to create the the EDU data sets.
+```{r}
+EDU01 <- my_wrapper("https://www4.stat.ncsu.edu/~online/datasets/EDU01a.csv")
+EDU02 <- my_wrapper("https://www4.stat.ncsu.edu/~online/datasets/EDU01b.csv")
+
+EDU <- combineTibbles(EDU01, EDU02)
+
+stateFinalEDU <- as_tibble(EDU[[2]])
+countyFinalEDU <- as_tibble(EDU[[1]])
+stateFinalEDU
+countyFinalEDU
+```
+Using the plot functions on both the state and county final data sets.
+```{r}
+plot.state(stateFinalEDU)
+plot.county(countyFinalEDU, state_abbrev = "PA", x = 7) #PA, top, 7 observations
+plot.county(countyFinalEDU, state_abbrev = "PA", bottom = TRUE, x = 4) #PA, bottom, 4 observations
+plot.county(countyFinalEDU) #Using all the default values
+plot.county(countyFinalEDU, state_abbrev = "MN", x = 10) #MN, top, 10 observations
+```
+
+## PST Data Sets
+
+Run the data processing (wrapper) function on the four urls given.
+```{r}
+PST01 <- my_wrapper("https://www4.stat.ncsu.edu/~online/datasets/PST01a.csv")
+PST02 <- my_wrapper("https://www4.stat.ncsu.edu/~online/datasets/PST01b.csv")
+PST03 <- my_wrapper("https://www4.stat.ncsu.edu/~online/datasets/PST01c.csv")
+PST04 <- my_wrapper("https://www4.stat.ncsu.edu/~online/datasets/PST01d.csv")
+```
+Run the data combining function to put these into one object (with two data frames).
+```{r}
+PST0102 <- combineTibbles(PST01, PST02)
+PST0304 <- combineTibbles(PST03, PST04)
+PST <- combineTibbles(PST0102, PST0304)
+
+stateFinalPST <- as_tibble(PST[[2]])
+countyFinalPST <- as_tibble(PST[[1]])
+stateFinalPST
+countyFinalPST
+```
+Use the plot function on the PST state data frame.
+```{r}
+plot.state(stateFinalPST)
+```
+
+Use the plot function on the PST county data frame.
+```{r}
+plot.county(countyFinalPST, state_abbrev = "CT", x = 6) #CT, top, 6 observations
+plot.county(countyFinalPST, state_abbrev = "NC", bottom = TRUE, x = 10) #NC, bottom, 10 observations
+plot.county(countyFinalPST) #Using all the default values
+plot.county(countyFinalPST, state_abbrev = "MN", x = 4) #MN, top, 4 observations
+```
+
+
