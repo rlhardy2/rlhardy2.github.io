@@ -9,3 +9,5 @@ This project was honestly a little overwhelming for me for many reasons. One rea
 The link to my RMD file for Project 1 is below:
 
 [Project 1 RMD file](https://github.com/rlhardy2/rlhardy2.github.io/blob/67808fa12bf8d609564acf82a0445839bf7087cc/_posts/Project%201.Rmd)
+
+[Project 1 HTML file](https://rlhardy2.github.io/Project-1.html)
