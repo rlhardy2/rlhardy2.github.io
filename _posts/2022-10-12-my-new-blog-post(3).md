@@ -15,4 +15,5 @@ The most difficult part of the logic and programming for me was writing the func
 The links to our GitHub Pages repository and the actual GitHub repository are below:
 
 [GitHub Pages repository](https://rlhardy2.github.io/ST-558-Project-2/)
+
 [GitHub repository](https://github.com/rlhardy2/ST-558-Project-2)
