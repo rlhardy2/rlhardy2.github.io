@@ -11,3 +11,10 @@ The purpose of an EDA is perform visualizations and identify significant pattern
 
 The overall goal when doing an EDA is to analyze and investigate data sets and summarize their main characteristics. It helps determine how best to manipulate data sources to get the answers you need, making it easier for data scientists to discover patterns, spot anomalies, test a hypothesis, or check assumptions (IBM article). Basically, it gives you a nice and informative overview of your data so that you can best decide what to do with it, how to appraoch it, and how to find the answers you might be searching for.
 
+Methods...
+
+Something that I think is really important is checking for missing data as well as outliers, since these can alter your tables and graphs significantly. By accounting for these things, your EDA will be more accurate and informative.
+
+Websites used:
+
+(https://shopify.engineering/conducting-exploratory-data-analysis)
