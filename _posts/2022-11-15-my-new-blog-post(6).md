@@ -12,7 +12,7 @@ partner). You should then also reflect on the process you went through. Discuss 
 
 **Put answer here!**
 
-The links to the GitHub repository as well as the GitHub pages are below:
+The links to the GitHub repository as well as the GitHub pages repository are below:
 
 [GitHub pages repository](https://rlhardy2.github.io/ST-558-Project-3/)
 [GitHub repository](https://github.com/rlhardy2/ST-558-Project-3)
