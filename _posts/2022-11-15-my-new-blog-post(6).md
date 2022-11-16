@@ -10,7 +10,7 @@ partner). You should then also reflect on the process you went through. Discuss 
 * What was the most difficult part for you?
 * What are your big take-aways from this project?
 
-To be compmetely honest, my partner and I handled this project pretty well. I'm not sure if there's much I'd do differently in the future besides maybe just trying to start earlier.
+To be completely honest, my partner and I handled this project pretty well. I'm not sure if there's much I'd do differently in the future besides maybe just trying to start earlier.
 The most difficult part for me (and my partner) was the automation! We struggled with that a lot, though the rest of the project was pretty doable. 
 My big takeaways from this project are:
 
